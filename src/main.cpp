@@ -11,13 +11,9 @@ protected:
     CCMenuItemSpriteExtra* m_checkButton = nullptr;
     LoadingCircle* m_loadingCircle = nullptr;
     CCLabelBMFont* m_label = nullptr;
-    CCMenu* m_menu = nullptr;
     bool m_clicked = false;
 
-    bool init() {
-        if (!Popup::init(300.f, 200.f))
-            return false;
-
+    bool setup() override {
         this->setTitle("CAPTCHA");
 
         m_label = CCLabelBMFont::create("I am not a robot", "bigFont.fnt");
@@ -25,23 +21,17 @@ protected:
         m_label->setScale(0.6f);
         m_mainLayer->addChild(m_label);
 
-        auto offSprite = CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png");
-        m_checkButton = CCMenuItemSpriteExtra::create(
-            offSprite,
-            this,
-            menu_selector(CaptchaPopup::onCheckClicked)
-        );
-        m_checkButton->setPosition(ccp(60, 100));
-
-        m_menu = CCMenu::create();
-        m_menu->setPosition(0, 0);
-        m_menu->addChild(m_checkButton);
-        m_mainLayer->addChild(m_menu);
+        auto checkButton = Button::create("GJ_checkOff_001.png", [this](auto) {
+            this->onCheckClicked();
+        });
+        checkButton->setPosition(ccp(60, 100));
+        m_buttonMenu->addChild(checkButton);
+        m_checkButton = checkButton;
 
         return true;
     }
 
-    void onCheckClicked(CCObject*) {
+    void onCheckClicked() {
         if (m_clicked) return;
         m_clicked = true;
 
@@ -74,7 +64,7 @@ protected:
 public:
     static CaptchaPopup* create() {
         auto ret = new CaptchaPopup();
-        if (ret->init()) {
+        if (ret->initAnchored(300.f, 200.f)) {
             ret->autorelease();
             return ret;
         }
@@ -84,33 +74,11 @@ public:
 };
 
 template <typename T, typename Func>
-void handleHttpRequest(
-    T* self,
-    Func originalFunc,
-    gd::string url,
-    gd::string params,
-    gd::string tag,
-    GJHttpType type
-) {
-    int chance = Mod::get()->getSettingValue<int64_t>("chance");
-    if (chance <= 0) {
-        (self->*originalFunc)(url, params, tag, type);
-        return;
+void handleHttpRequest(T* self, Func originalFunc, gd::string url, gd::string params, gd::string tag, GJHttpType type) {
+    auto chance = Mod::get()->getSettingValue<int64_t>("chance");
+    if (chance > 0 && utils::random::chance(chance)) {
+        CaptchaPopup::create()->show();
     }
-
-    static bool seeded = false;
-    if (!seeded) {
-        srand(time(nullptr));
-        seeded = true;
-    }
-    int randVal = rand() % 100;
-    if (randVal >= chance) {
-        (self->*originalFunc)(url, params, tag, type);
-        return;
-    }
-
-    auto popup = CaptchaPopup::create();
-    popup->show();
     (self->*originalFunc)(url, params, tag, type);
 }
 
