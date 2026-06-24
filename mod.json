@@ -7,14 +7,20 @@
         "ios": "2.2081"
     },
     "version": "1.0.0",
-    "id": "MalikHw.gd-captcha-joy-hand-hand",
-    "name": "gd-captcha-joy-hand-hand",
-    "developer": "MalikHw",
-    "description": "desc.",
-    "tags": ["yes", "yeah"],
+    "id": "malikhw47.captcha",
+    "name": "Captcha",
+    "developer": "MalikHw47",
+    "description": "Captcha when you connect with robtop's servers",
+    "tags": ["online", "joke"],
     "links": {
         "source": "https://github.com/MalikHw/gd-captcha-joy-hand-hand",
         "community": "https://discord.gg/G9bZ92eg2n"
     },
-    "settings": {}
+    "settings": {
+        "chance": {
+            "name": "Chance",
+            "description": "Chance of captcha appearing (0-95)",
+            "type": "int", "default": 50, "min": 0, "max": 95
+        }
+    }
 }
