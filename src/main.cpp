@@ -11,9 +11,13 @@ protected:
     CCMenuItemSpriteExtra* m_checkButton = nullptr;
     LoadingCircle* m_loadingCircle = nullptr;
     CCLabelBMFont* m_label = nullptr;
+    CCMenu* m_menu = nullptr;
     bool m_clicked = false;
 
-    bool setup() override {
+    bool init() {
+        if (!Popup::init(300.f, 200.f))
+            return false;
+
         this->setTitle("CAPTCHA");
 
         m_label = CCLabelBMFont::create("I am not a robot", "bigFont.fnt");
@@ -21,17 +25,23 @@ protected:
         m_label->setScale(0.6f);
         m_mainLayer->addChild(m_label);
 
-        auto checkButton = Button::create("GJ_checkOff_001.png", [this](auto) {
-            this->onCheckClicked();
-        });
-        checkButton->setPosition(ccp(60, 100));
-        m_buttonMenu->addChild(checkButton);
-        m_checkButton = checkButton;
+        auto offSprite = CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png");
+        m_checkButton = CCMenuItemSpriteExtra::create(
+            offSprite,
+            this,
+            menu_selector(CaptchaPopup::onCheckClicked)
+        );
+        m_checkButton->setPosition(ccp(60, 100));
+
+        m_menu = CCMenu::create();
+        m_menu->setPosition(0, 0);
+        m_menu->addChild(m_checkButton);
+        m_mainLayer->addChild(m_menu);
 
         return true;
     }
 
-    void onCheckClicked() {
+    void onCheckClicked(CCObject*) {
         if (m_clicked) return;
         m_clicked = true;
 
@@ -64,7 +74,7 @@ protected:
 public:
     static CaptchaPopup* create() {
         auto ret = new CaptchaPopup();
-        if (ret->initAnchored(300.f, 200.f)) {
+        if (ret->init()) {
             ret->autorelease();
             return ret;
         }
