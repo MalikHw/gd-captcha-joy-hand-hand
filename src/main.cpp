@@ -4,6 +4,7 @@
 #include <Geode/modify/GJAccountManager.hpp>
 #include <Geode/modify/GJMultiplayerManager.hpp>
 #include <Geode/modify/MusicDownloadManager.hpp>
+#include <cstdlib>
 
 using namespace geode::prelude;
 
@@ -16,7 +17,7 @@ protected:
     CCMenu* m_menu = nullptr;
     bool m_clicked = false;
 
-    bool init() {
+    bool init() override {
         if (!Popup::init(300.f, 100.f))
             return false;
 
@@ -111,7 +112,7 @@ template <typename T, typename Func>
 void handleHttpRequest(T* self, Func originalFunc, gd::string url, gd::string params, gd::string tag, GJHttpType type) {
     auto chance = Mod::get()->getSettingValue<int64_t>("chance");
     if (chance > 0 && !CaptchaPopup::isPopupVisible()) {
-        auto randVal = utils::random::rand() % 100;
+        auto randVal = std::rand() % 100;
         if (randVal < chance) {
             CaptchaPopup::showPopup();
         }
