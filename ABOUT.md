@@ -1,4 +1,5 @@
 Captcha when you connect with robtop's servers.
+<cr>(There's some layering bug, i will fix in next release :3)</c>
 
 ### Credits:
 - [MalikHw47](https://youtube.com/@MalikHw47): mod

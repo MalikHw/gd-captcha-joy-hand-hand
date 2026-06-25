@@ -9,6 +9,7 @@ using namespace geode::prelude;
 
 class CaptchaPopup : public Popup {
 protected:
+    static CaptchaPopup* s_currentPopup;
     CCMenuItemSpriteExtra* m_checkButton = nullptr;
     LoadingSpinner* m_loadingSpinner = nullptr;
     CCLabelBMFont* m_label = nullptr;
@@ -16,7 +17,7 @@ protected:
     bool m_clicked = false;
 
     bool init() {
-        if (!Popup::init(300.f, 200.f))
+        if (!Popup::init(300.f, 100.f))
             return false;
 
         this->setTitle("CAPTCHA");
@@ -74,6 +75,11 @@ protected:
         this->onClose(nullptr);
     }
 
+    void onClose(CCObject* sender) override {
+        Popup::onClose(sender);
+        s_currentPopup = nullptr;
+    }
+
 public:
     static CaptchaPopup* create() {
         auto ret = new CaptchaPopup();
@@ -84,13 +90,31 @@ public:
         delete ret;
         return nullptr;
     }
+
+    static bool isPopupVisible() {
+        return s_currentPopup != nullptr;
+    }
+
+    static void showPopup() {
+        if (s_currentPopup) return;
+        auto popup = CaptchaPopup::create();
+        s_currentPopup = popup;
+        Loader::get()->queueInMainThread([popup] {
+            popup->show();
+        });
+    }
 };
+
+CaptchaPopup* CaptchaPopup::s_currentPopup = nullptr;
 
 template <typename T, typename Func>
 void handleHttpRequest(T* self, Func originalFunc, gd::string url, gd::string params, gd::string tag, GJHttpType type) {
     auto chance = Mod::get()->getSettingValue<int64_t>("chance");
-    if (chance > 0 && utils::random::chance(chance)) {
-        CaptchaPopup::create()->show();
+    if (chance > 0 && !CaptchaPopup::isPopupVisible()) {
+        auto randVal = utils::random::randint(0, 99);
+        if (randVal < chance) {
+            CaptchaPopup::showPopup();
+        }
     }
     (self->*originalFunc)(url, params, tag, type);
 }
