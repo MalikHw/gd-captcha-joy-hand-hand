@@ -24,7 +24,7 @@ protected:
         this->setTitle("CAPTCHA");
 
         m_label = CCLabelBMFont::create("I am not a robot", "bigFont.fnt");
-        m_label->setPosition(ccp(185, 100));
+        m_label->setPosition(ccp(185, 45));
         m_label->setScale(0.6f);
         m_mainLayer->addChild(m_label);
 
@@ -34,7 +34,7 @@ protected:
             this,
             menu_selector(CaptchaPopup::onCheckClicked)
         );
-        m_checkButton->setPosition(ccp(60, 100));
+        m_checkButton->setPosition(ccp(60, 45));
 
         m_menu = CCMenu::create();
         m_menu->setPosition(0, 0);
@@ -52,7 +52,7 @@ protected:
         m_checkButton->setVisible(false);
         
         m_loadingSpinner = LoadingSpinner::create(40.f);
-        m_loadingSpinner->setPosition(ccp(150, 100));
+        m_loadingSpinner->setPosition(ccp(150, 45));
         m_mainLayer->addChild(m_loadingSpinner);
 
         this->scheduleOnce(schedule_selector(CaptchaPopup::onAutoCheck), 1.0f);
@@ -66,7 +66,7 @@ protected:
         m_label->setVisible(true);
         m_checkButton->setVisible(true);
         auto onSprite = CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png");
-        onSprite->setPosition(ccp(60, 100));
+        onSprite->setPosition(ccp(60, 45));
         m_mainLayer->addChild(onSprite);
 
         this->scheduleOnce(schedule_selector(CaptchaPopup::closePopup), 0.5f);
