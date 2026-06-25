@@ -1,4 +1,5 @@
 #include <Geode/Geode.hpp>
+#include <Geode/ui/LoadingSpinner.hpp>
 #include <Geode/modify/GameLevelManager.hpp>
 #include <Geode/modify/GJAccountManager.hpp>
 #include <Geode/modify/GJMultiplayerManager.hpp>
@@ -9,7 +10,7 @@ using namespace geode::prelude;
 class CaptchaPopup : public Popup {
 protected:
     CCMenuItemSpriteExtra* m_checkButton = nullptr;
-    LoadingCircle* m_loadingCircle = nullptr;
+    LoadingSpinner* m_loadingSpinner = nullptr;
     CCLabelBMFont* m_label = nullptr;
     CCMenu* m_menu = nullptr;
     bool m_clicked = false;
@@ -45,21 +46,23 @@ protected:
         if (m_clicked) return;
         m_clicked = true;
 
-        m_checkButton->removeFromParent();
+        m_label->setVisible(false);
+        m_checkButton->setVisible(false);
         
-        m_loadingCircle = LoadingCircle::create();
-        m_loadingCircle->setPosition(ccp(60, 100));
-        m_loadingCircle->show();
-        m_mainLayer->addChild(m_loadingCircle);
+        m_loadingSpinner = LoadingSpinner::create(40.f);
+        m_loadingSpinner->setPosition(ccp(150, 100));
+        m_mainLayer->addChild(m_loadingSpinner);
 
         this->scheduleOnce(schedule_selector(CaptchaPopup::onAutoCheck), 1.0f);
     }
 
     void onAutoCheck(float) {
-        if (m_loadingCircle) {
-            m_loadingCircle->fadeAndRemove();
+        if (m_loadingSpinner) {
+            m_loadingSpinner->removeFromParent();
         }
 
+        m_label->setVisible(true);
+        m_checkButton->setVisible(true);
         auto onSprite = CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png");
         onSprite->setPosition(ccp(60, 100));
         m_mainLayer->addChild(onSprite);
