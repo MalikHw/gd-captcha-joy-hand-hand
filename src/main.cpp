@@ -10,7 +10,7 @@ using namespace geode::prelude;
 
 class CaptchaPopup : public Popup {
 protected:
-    static CaptchaPopup* s_currentPopup;
+    static Ref<CaptchaPopup> s_currentPopup;
     CCMenuItemSpriteExtra* m_checkButton = nullptr;
     LoadingSpinner* m_loadingSpinner = nullptr;
     CCLabelBMFont* m_label = nullptr;
@@ -100,15 +100,13 @@ public:
         if (s_currentPopup) return;
         auto popup = CaptchaPopup::create();
         s_currentPopup = popup;
-        popup->retain();
         Loader::get()->queueInMainThread([popup] {
             popup->show();
-            popup->release();
         });
     }
 };
 
-CaptchaPopup* CaptchaPopup::s_currentPopup = nullptr;
+Ref<CaptchaPopup> CaptchaPopup::s_currentPopup = nullptr;
 
 template <typename T, typename Func>
 void handleHttpRequest(T* self, Func originalFunc, gd::string url, gd::string params, gd::string tag, GJHttpType type) {
