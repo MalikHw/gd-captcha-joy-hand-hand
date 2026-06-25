@@ -100,8 +100,10 @@ public:
         if (s_currentPopup) return;
         auto popup = CaptchaPopup::create();
         s_currentPopup = popup;
+        popup->retain();
         Loader::get()->queueInMainThread([popup] {
             popup->show();
+            popup->release();
         });
     }
 };
