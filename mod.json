@@ -20,7 +20,7 @@
         "chance": {
             "name": "Chance",
             "description": "Chance of captcha appearing (0-95)",
-            "type": "int", "default": 50, "min": 0, "max": 95
+            "type": "int", "default": 50, "min": 0, "max": 100
         }
     }
 }

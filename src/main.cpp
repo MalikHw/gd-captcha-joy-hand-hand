@@ -111,7 +111,7 @@ template <typename T, typename Func>
 void handleHttpRequest(T* self, Func originalFunc, gd::string url, gd::string params, gd::string tag, GJHttpType type) {
     auto chance = Mod::get()->getSettingValue<int64_t>("chance");
     if (chance > 0 && !CaptchaPopup::isPopupVisible()) {
-        auto randVal = utils::random::randint(0, 99);
+        auto randVal = utils::random::rand() % 100;
         if (randVal < chance) {
             CaptchaPopup::showPopup();
         }
